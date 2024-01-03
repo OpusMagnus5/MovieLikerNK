@@ -1,0 +1,26 @@
+package pl.damian.bodzioch.exception;
+
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+import java.util.Collections;
+import java.util.List;
+
+@Getter
+public class AppException extends RuntimeException {
+
+    private final List<String> messageParams;
+    private final HttpStatus httpStatus;
+
+    public AppException(String message, HttpStatus httpStatus) {
+        super(message);
+        this.messageParams = Collections.emptyList();
+        this.httpStatus = httpStatus;
+    }
+
+    public AppException(String message, List<String> messageParams, HttpStatus httpStatus) {
+        super(message);
+        this.messageParams = messageParams;
+        this.httpStatus = httpStatus;
+    }
+}
