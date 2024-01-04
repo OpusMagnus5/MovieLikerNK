@@ -1,5 +1,6 @@
 package pl.damian.bodzioch.client.omdb.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,12 +10,26 @@ import java.io.Serializable;
 @Setter
 public class OmdbMovieModel implements Serializable {
 
-    private String Title;
-    private String Plot;
-    private String Genre;
-    private String Director;
-    private Integer Year;
-    private String Poster;
+    @JsonProperty("Title")
+    private String title;
+
+    @JsonProperty("Plot")
+    private String plot;
+
+    @JsonProperty("Genre")
+    private String genre;
+
+    @JsonProperty("Director")
+    private String director;
+
+    @JsonProperty("Year")
+    private Integer year;
+
+    @JsonProperty("Poster")
+    private String poster;
+
     private String imdbID;
-    private Boolean Response;
+
+    @JsonProperty("Response")
+    private Boolean response;
 }

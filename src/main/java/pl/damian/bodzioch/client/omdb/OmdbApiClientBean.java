@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import pl.damian.bodzioch.client.omdb.interfaces.OmdbApiClient;
 import pl.damian.bodzioch.client.omdb.models.OmdbMovieModel;
 import pl.damian.bodzioch.client.omdb.models.OmdbSearchResponseModel;
 import pl.damian.bodzioch.exception.AppException;
@@ -15,10 +16,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class OmdbApiClient {
+public class OmdbApiClientBean implements OmdbApiClient {
 
     private final static String BASE_URL = "https://www.omdbapi.com/";
     private final static String TITLE_PARAM_NAME = "s";
@@ -31,17 +33,16 @@ public class OmdbApiClient {
     private final RestTemplate restTemplate;
     private final String apiKey;
 
-    public OmdbApiClient(RestTemplate restTemplate, @Value("${client.omdb.apiKey}") String apiKey) {
+    public OmdbApiClientBean(RestTemplate restTemplate, @Value("${client.omdb.apiKey}") String apiKey) {
         this.restTemplate = restTemplate;
         this.apiKey = apiKey;
     }
 
+    @Override
     public List<OmdbMovieModel> getMovies(String searchInput) {
         OmdbSearchResponseModel firstPage = getPageOfMovies(searchInput, 1);
-        if (!firstPage.getResponse()) {
-            throw new AppException("client.omdb.movieNotFound", HttpStatus.NOT_FOUND);
-        }
         List<OmdbSearchResponseModel> movieList = getMovieList(searchInput, firstPage);
+        movieList.add(0, firstPage);
         List<String> movieIds = movieList.stream()
                 .map(OmdbSearchResponseModel::getSearch)
                 .flatMap(List::stream)
@@ -63,7 +64,7 @@ public class OmdbApiClient {
             allFutures.get(1, TimeUnit.MINUTES);
             return futures.stream()
                     .map(CompletableFuture::join)
-                    .toList();
+                    .collect(Collectors.toList());
         } catch (ExecutionException | InterruptedException e) {
             log.error("An error occurred while waiting for futures to complete.", e);
             throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -102,7 +103,11 @@ public class OmdbApiClient {
                 .build()
                 .toUri();
         try {
-            return restTemplate.getForEntity(uri, OmdbSearchResponseModel.class).getBody();
+            OmdbSearchResponseModel pageOfMovies = restTemplate.getForEntity(uri, OmdbSearchResponseModel.class).getBody();
+            if (pageOfMovies == null || !pageOfMovies.getResponse()) {
+                throw new AppException("client.omdb.movieNotFound", HttpStatus.NOT_FOUND);
+            }
+            return pageOfMovies;
         } catch (RestClientException e) {
             log.error("Error occurred while making a request to the OMDB API for given input: " + searchInput, e);
             throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -117,7 +122,11 @@ public class OmdbApiClient {
                 .toUri();
 
         try {
-            return restTemplate.getForEntity(uri, OmdbMovieModel.class).getBody();
+            OmdbMovieModel movie = restTemplate.getForEntity(uri, OmdbMovieModel.class).getBody();
+            if (movie == null || !movie.getResponse()) {
+                throw new AppException("client.omdb.movieNotFound", HttpStatus.NOT_FOUND);
+            }
+            return movie;
         } catch (RestClientException e) {
             log.error("Error occurred while making a request to the OMDB API for imdbId: " + imdbId, e);
             throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);

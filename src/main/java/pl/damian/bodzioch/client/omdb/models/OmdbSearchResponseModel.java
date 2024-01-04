@@ -1,5 +1,6 @@
 package pl.damian.bodzioch.client.omdb.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +11,11 @@ import java.util.List;
 @Setter
 public class OmdbSearchResponseModel implements Serializable {
 
-    private List<OmdbMovieModel> Search;
+    @JsonProperty("Search")
+    private List<OmdbMovieModel> search;
+
     private Long totalResults;
-    private Boolean Response;
+
+    @JsonProperty("Response")
+    private Boolean response;
 }
