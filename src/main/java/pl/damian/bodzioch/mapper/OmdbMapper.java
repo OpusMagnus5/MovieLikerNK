@@ -18,7 +18,10 @@ public class OmdbMapper {
                         .split(","))
                         .map(String::trim)
                         .toList())
-                .director(movie.getDirector())
+                .directors(Arrays.stream(movie.getDirector()
+                                .split(","))
+                                .map(String::trim)
+                                .toList())
                 .build();
     }
 }

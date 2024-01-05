@@ -15,7 +15,7 @@ public class ControllerMapper {
                 .genres(movie.getGenres())
                 .imdbID(movie.getImdbID())
                 .poster(movie.getPoster())
-                .director(movie.getDirector())
+                .directors(movie.getDirectors())
                 .build();
     }
 }

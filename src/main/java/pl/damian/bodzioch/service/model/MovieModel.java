@@ -12,7 +12,7 @@ public class MovieModel {
     private String title;
     private String plot;
     private List<String> genres;
-    private String director;
+    private List<String> directors;
     private Integer year;
     private String poster;
     private Long imdbID;
