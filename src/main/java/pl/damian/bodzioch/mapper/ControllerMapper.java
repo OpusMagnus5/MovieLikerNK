@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import pl.damian.bodzioch.controller.dto.MovieGetDto;
 import pl.damian.bodzioch.controller.dto.MovieSearchDto;
 import pl.damian.bodzioch.service.intefraces.SecurityService;
-import pl.damian.bodzioch.service.model.MovieModel;
+import pl.damian.bodzioch.model.MovieModel;
 
 @Component
 @AllArgsConstructor

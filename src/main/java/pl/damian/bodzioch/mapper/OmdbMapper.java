@@ -1,7 +1,7 @@
 package pl.damian.bodzioch.mapper;
 
 import pl.damian.bodzioch.client.omdb.models.OmdbMovieModel;
-import pl.damian.bodzioch.service.model.MovieModel;
+import pl.damian.bodzioch.model.MovieModel;
 
 import java.util.Arrays;
 

@@ -1,4 +1,4 @@
-package pl.damian.bodzioch.service.model;
+package pl.damian.bodzioch.model;
 
 import lombok.Builder;
 import lombok.Getter;
