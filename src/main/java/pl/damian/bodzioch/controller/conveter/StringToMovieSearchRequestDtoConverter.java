@@ -7,6 +7,7 @@ import pl.damian.bodzioch.controller.dto.MovieSearchRequestDto;
 
 @Component
 public class StringToMovieSearchRequestDtoConverter implements Converter<String, MovieSearchRequestDto> {
+
     @Override
     public MovieSearchRequestDto convert(@Nonnull String source) {
         return new MovieSearchRequestDto(source);

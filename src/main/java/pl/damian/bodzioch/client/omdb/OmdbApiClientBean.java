@@ -1,6 +1,7 @@
 package pl.damian.bodzioch.client.omdb;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class OmdbApiClientBean implements OmdbApiClient {
     private final static String MOVIE_TYPE_PARAM_VALUE = "movie";
     private final static String API_KEY_PARAM_NAME = "apikey";
     private final static String PAGE_PARAM_NAME = "page";
+    private final static int IMDB_ID_CORRECT_LENGTH = 7;
 
     private final RestTemplate restTemplate;
     private final String apiKey;
@@ -49,6 +51,12 @@ public class OmdbApiClientBean implements OmdbApiClient {
                 .map(OmdbMovieModel::getImdbID)
                 .toList();
         return getMovieWithDetailsList(movieIds);
+    }
+
+    @Override
+    public OmdbMovieModel getMovie(Long imdbId) {
+        String correctImdbId = getCorrectImdbId(imdbId);
+        return getMovieDetails(correctImdbId);
     }
 
     private List<OmdbSearchResponseModel> getMovieList(String searchInput, OmdbSearchResponseModel firstPage) {
@@ -131,5 +139,11 @@ public class OmdbApiClientBean implements OmdbApiClient {
             log.error("Error occurred while making a request to the OMDB API for imdbId: " + imdbId, e);
             throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private String getCorrectImdbId(Long imdbId) {
+        String idAsString = imdbId.toString();
+        String paddedId = StringUtils.leftPad(idAsString, IMDB_ID_CORRECT_LENGTH, '0');
+        return  "tt" + paddedId;
     }
 }

@@ -11,5 +11,5 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class BaseResponse implements Serializable {
 
-    private String error;
+    private String message;
 }

@@ -7,4 +7,6 @@ import java.util.List;
 public interface OmdbApiClient {
 
     List<OmdbMovieModel> getMovies(String searchInput);
+
+    OmdbMovieModel getMovie(Long imdbId);
 }

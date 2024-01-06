@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 import java.util.Locale;
 
 @EntityScan(basePackages = {"pl.damian.bodzioch.repository.entity"})
-@EnableJpaRepositories(basePackages = "pl.bodzioch.damian.repository")
+@EnableJpaRepositories(basePackages = "pl.damian.bodzioch.repository")
 @EnableTransactionManagement
 @SpringBootApplication
 public class App {
