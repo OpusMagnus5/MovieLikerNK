@@ -1,6 +1,7 @@
 package pl.damian.bodzioch.client.omdb;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class OmdbApiClientBean implements OmdbApiClient {
     private final static String MOVIE_TYPE_PARAM_VALUE = "movie";
     private final static String API_KEY_PARAM_NAME = "apikey";
     private final static String PAGE_PARAM_NAME = "page";
+    private final static int IMDB_ID_CORRECT_LENGTH = 7;
 
     private final RestTemplate restTemplate;
     private final String apiKey;
@@ -51,6 +53,12 @@ public class OmdbApiClientBean implements OmdbApiClient {
         return getMovieWithDetailsList(movieIds);
     }
 
+    @Override
+    public OmdbMovieModel getMovie(Long imdbId) {
+        String correctImdbId = getCorrectImdbId(imdbId);
+        return getMovieDetails(correctImdbId);
+    }
+
     private List<OmdbSearchResponseModel> getMovieList(String searchInput, OmdbSearchResponseModel firstPage) {
         List<CompletableFuture<OmdbSearchResponseModel>> futures = new ArrayList<>();
         try (ExecutorService executorService = Executors.newCachedThreadPool()) {
@@ -67,10 +75,10 @@ public class OmdbApiClientBean implements OmdbApiClient {
                     .collect(Collectors.toList());
         } catch (ExecutionException | InterruptedException e) {
             log.error("An error occurred while waiting for futures to complete.", e);
-            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR, e);
         } catch (TimeoutException e) {
             log.warn("A timeout occurred while waiting for futures to complete.");
-            throw new AppException("client.omdb.timeout", HttpStatus.REQUEST_TIMEOUT);
+            throw new AppException("client.omdb.timeout", HttpStatus.REQUEST_TIMEOUT, e);
         }
     }
 
@@ -87,10 +95,10 @@ public class OmdbApiClientBean implements OmdbApiClient {
                     .toList();
         } catch (ExecutionException | InterruptedException e) {
             log.error("An error occurred while waiting for futures to complete.", e);
-            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR, e);
         } catch (TimeoutException e) {
             log.warn("A timeout occurred while waiting for futures to complete.");
-            throw new AppException("client.omdb.timeout", HttpStatus.REQUEST_TIMEOUT);
+            throw new AppException("client.omdb.timeout", HttpStatus.REQUEST_TIMEOUT, e);
         }
     }
 
@@ -110,7 +118,7 @@ public class OmdbApiClientBean implements OmdbApiClient {
             return pageOfMovies;
         } catch (RestClientException e) {
             log.error("Error occurred while making a request to the OMDB API for given input: " + searchInput, e);
-            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -129,7 +137,13 @@ public class OmdbApiClientBean implements OmdbApiClient {
             return movie;
         } catch (RestClientException e) {
             log.error("Error occurred while making a request to the OMDB API for imdbId: " + imdbId, e);
-            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
+    }
+
+    private String getCorrectImdbId(Long imdbId) {
+        String idAsString = imdbId.toString();
+        String paddedId = StringUtils.leftPad(idAsString, IMDB_ID_CORRECT_LENGTH, '0');
+        return  "tt" + paddedId;
     }
 }

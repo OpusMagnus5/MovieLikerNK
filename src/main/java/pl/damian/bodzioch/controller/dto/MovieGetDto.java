@@ -5,11 +5,11 @@ import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.List;
-
-@Builder
 @Getter
-public class MovieSearchDto implements Serializable {
+@Builder
+public class MovieGetDto implements Serializable {
 
+    private String id;
     private String title;
     private String plot;
     private List<String> genres;
