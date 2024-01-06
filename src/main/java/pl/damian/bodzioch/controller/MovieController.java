@@ -31,7 +31,7 @@ public class MovieController {
     public ResponseEntity<MovieSearchResponseDto> searchMovies(@Valid @PathVariable("input") MovieSearchRequestDto request) {
         List<MovieModel> movieModels = this.omdbService.searchMovies(request.getInput());
         List<MovieSearchDto> movies = movieModels.stream()
-                .map(this.mapper::map)
+                .map(this.mapper::mapToMovieSearchDto)
                 .toList();
         MovieSearchResponseDto response = MovieSearchResponseDto.builder()
                 .movies(movies)
@@ -41,8 +41,17 @@ public class MovieController {
 
     @PostMapping
     public ResponseEntity<BaseResponse> saveMovie(@Valid @RequestBody MovieSaveRequestDto request) {
-        movieService.saveMovie(request.getImdbId());
-        String message = messageSource.getMessage("controller.movieController.successfulSave", new Object[0], LocaleContextHolder.getLocale());
+        this.movieService.saveMovie(request.getImdbId());
+        String message = this.messageSource.getMessage("controller.movieController.successfulSave", new Object[0], LocaleContextHolder.getLocale());
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse(message));
+    }
+
+    @GetMapping
+    public ResponseEntity<MovieGetAllResponseDto> getAll() {
+        List<MovieModel> allMovies = movieService.getAllMovies();
+        List<MovieGetDto> movies = allMovies.stream()
+                .map(this.mapper::mapToMovieGetDto)
+                .toList();
+        return ResponseEntity.ok(new MovieGetAllResponseDto(movies));
     }
 }

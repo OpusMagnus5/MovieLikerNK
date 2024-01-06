@@ -18,8 +18,14 @@ public class AppException extends RuntimeException {
         this.httpStatus = httpStatus;
     }
 
-    public AppException(String message, List<String> messageParams, HttpStatus httpStatus) {
-        super(message);
+    public AppException(String message, HttpStatus httpStatus, Exception exception) {
+        super(message, exception);
+        this.messageParams = Collections.emptyList();
+        this.httpStatus = httpStatus;
+    }
+
+    public AppException(String message, List<String> messageParams, HttpStatus httpStatus, Exception exception) {
+        super(message, exception);
         this.messageParams = messageParams;
         this.httpStatus = httpStatus;
     }

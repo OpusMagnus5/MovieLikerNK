@@ -1,15 +1,15 @@
-package pl.damian.bodzioch.service.model;
+package pl.damian.bodzioch.controller.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.List;
-
 @Getter
 @Builder
-public class MovieModel {
+public class MovieGetDto implements Serializable {
 
-    private Long id;
+    private String id;
     private String title;
     private String plot;
     private List<String> genres;

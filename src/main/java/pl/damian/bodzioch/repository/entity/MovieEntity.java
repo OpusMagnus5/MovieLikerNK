@@ -1,15 +1,15 @@
 package pl.damian.bodzioch.repository.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
 @Getter
 @Setter
 @Builder
 @Entity(name = "movie")
+@NoArgsConstructor
+@AllArgsConstructor
 public class MovieEntity {
 
     @Id

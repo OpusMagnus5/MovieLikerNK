@@ -75,10 +75,10 @@ public class OmdbApiClientBean implements OmdbApiClient {
                     .collect(Collectors.toList());
         } catch (ExecutionException | InterruptedException e) {
             log.error("An error occurred while waiting for futures to complete.", e);
-            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR, e);
         } catch (TimeoutException e) {
             log.warn("A timeout occurred while waiting for futures to complete.");
-            throw new AppException("client.omdb.timeout", HttpStatus.REQUEST_TIMEOUT);
+            throw new AppException("client.omdb.timeout", HttpStatus.REQUEST_TIMEOUT, e);
         }
     }
 
@@ -95,10 +95,10 @@ public class OmdbApiClientBean implements OmdbApiClient {
                     .toList();
         } catch (ExecutionException | InterruptedException e) {
             log.error("An error occurred while waiting for futures to complete.", e);
-            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR, e);
         } catch (TimeoutException e) {
             log.warn("A timeout occurred while waiting for futures to complete.");
-            throw new AppException("client.omdb.timeout", HttpStatus.REQUEST_TIMEOUT);
+            throw new AppException("client.omdb.timeout", HttpStatus.REQUEST_TIMEOUT, e);
         }
     }
 
@@ -118,7 +118,7 @@ public class OmdbApiClientBean implements OmdbApiClient {
             return pageOfMovies;
         } catch (RestClientException e) {
             log.error("Error occurred while making a request to the OMDB API for given input: " + searchInput, e);
-            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -137,7 +137,7 @@ public class OmdbApiClientBean implements OmdbApiClient {
             return movie;
         } catch (RestClientException e) {
             log.error("Error occurred while making a request to the OMDB API for imdbId: " + imdbId, e);
-            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AppException("client.omdb.errorGetMovies", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 
