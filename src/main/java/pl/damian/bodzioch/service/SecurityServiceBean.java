@@ -2,6 +2,12 @@ package pl.damian.bodzioch.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import pl.damian.bodzioch.exception.AppException;
 import pl.damian.bodzioch.service.intefraces.SecurityService;
@@ -12,17 +18,21 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
-import java.util.Collections;
 
 @Service
 @Slf4j
 public class SecurityServiceBean implements SecurityService {
 
+    private final JwtEncoder jwtEncoder;
     private final SecretKey secretKey;
 
-    public SecurityServiceBean() throws GeneralSecurityException {
+    public SecurityServiceBean(JwtEncoder jwtEncoder) throws NoSuchAlgorithmException {
+        this.jwtEncoder = jwtEncoder;
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(256);
         this.secretKey = keyGenerator.generateKey();
@@ -40,7 +50,7 @@ public class SecurityServiceBean implements SecurityService {
             return Base64.getUrlEncoder().encodeToString(outputBytes);
         } catch (GeneralSecurityException e) {
             log.error("Cipher exception during encrypt message: {}", text, e);
-            throw new AppException("general.error", Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new AppException("general.error", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
     }
 
@@ -57,8 +67,21 @@ public class SecurityServiceBean implements SecurityService {
             return new String(decryptedBytes, StandardCharsets.UTF_8);
         } catch (GeneralSecurityException e) {
             log.error("Cipher exception during decrypt message: {}", encryptedText, e);
-            throw new AppException("general.error", Collections.emptyList(), HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw new AppException("general.error", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
+    }
+
+    @Override
+    public String generateToken(Authentication authentication) {
+        Instant now = Instant.now();
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .subject(authentication.getName())
+                .issuedAt(now)
+                .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                .build();
+        JwsHeader jwsHeader = JwsHeader.with(MacAlgorithm.HS512).build();
+        JwtEncoderParameters encoderParameters = JwtEncoderParameters.from(jwsHeader, claims);
+        return this.jwtEncoder.encode(encoderParameters).getTokenValue();
     }
 
     private byte[] attachIvAndGetOutput(byte[] iv, byte[] encryptedBytes) {

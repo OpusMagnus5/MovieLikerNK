@@ -12,7 +12,7 @@ import pl.damian.bodzioch.mapper.RepositoryMapper;
 import pl.damian.bodzioch.repository.MovieRepository;
 import pl.damian.bodzioch.repository.entity.MovieEntity;
 import pl.damian.bodzioch.service.intefraces.MovieService;
-import pl.damian.bodzioch.service.model.MovieModel;
+import pl.damian.bodzioch.model.MovieModel;
 
 import java.util.Comparator;
 import java.util.List;

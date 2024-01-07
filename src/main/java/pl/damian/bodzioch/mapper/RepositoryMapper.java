@@ -1,11 +1,16 @@
 package pl.damian.bodzioch.mapper;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import pl.damian.bodzioch.model.UserModel;
 import pl.damian.bodzioch.repository.entity.MovieEntity;
-import pl.damian.bodzioch.service.model.MovieModel;
+import pl.damian.bodzioch.model.MovieModel;
+import pl.damian.bodzioch.repository.entity.UserEntity;
 
 import java.util.Arrays;
 
 public class RepositoryMapper {
+
+    private final static BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public static MovieEntity map(MovieModel movie) {
         return MovieEntity.builder()
@@ -33,6 +38,13 @@ public class RepositoryMapper {
                         .map(String::trim)
                         .toList())
                 .poster(movie.getPoster())
+                .build();
+    }
+
+    public static UserEntity map(UserModel user) {
+        return UserEntity.builder()
+                .password(passwordEncoder.encode(user.getPassword()))
+                .username(user.getUsername())
                 .build();
     }
 }

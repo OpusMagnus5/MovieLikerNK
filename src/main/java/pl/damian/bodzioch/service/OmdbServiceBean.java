@@ -7,7 +7,7 @@ import pl.damian.bodzioch.client.omdb.interfaces.OmdbApiClient;
 import pl.damian.bodzioch.client.omdb.models.OmdbMovieModel;
 import pl.damian.bodzioch.exception.AppException;
 import pl.damian.bodzioch.mapper.OmdbMapper;
-import pl.damian.bodzioch.service.model.MovieModel;
+import pl.damian.bodzioch.model.MovieModel;
 import pl.damian.bodzioch.service.intefraces.OmdbService;
 
 import java.util.Comparator;

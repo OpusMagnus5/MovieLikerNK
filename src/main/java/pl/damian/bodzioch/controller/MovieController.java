@@ -12,7 +12,7 @@ import pl.damian.bodzioch.controller.dto.*;
 import pl.damian.bodzioch.mapper.ControllerMapper;
 import pl.damian.bodzioch.service.intefraces.MovieService;
 import pl.damian.bodzioch.service.intefraces.OmdbService;
-import pl.damian.bodzioch.service.model.MovieModel;
+import pl.damian.bodzioch.model.MovieModel;
 
 import java.util.List;
 
