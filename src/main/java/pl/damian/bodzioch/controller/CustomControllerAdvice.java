@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pl.damian.bodzioch.controller.dto.BaseResponse;
 import pl.damian.bodzioch.exception.AppException;
@@ -34,6 +35,7 @@ public class CustomControllerAdvice {
         return ResponseEntity.status(ex.getHttpStatus()).body(new BaseResponse(message));
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ConstraintViolationException.class})
     public ResponseEntity<BaseResponse> handleConstraintViolationException(ConstraintViolationException ex) {
         Locale locale = LocaleContextHolder.getLocale();
@@ -44,6 +46,7 @@ public class CustomControllerAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponse(message));
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<BaseResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         Locale locale = LocaleContextHolder.getLocale();

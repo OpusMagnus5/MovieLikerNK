@@ -1,5 +1,10 @@
 package pl.damian.bodzioch.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -18,6 +23,7 @@ import pl.damian.bodzioch.model.MovieModel;
 
 import java.util.List;
 
+@Tag(name = "Movie controller")
 @RestController
 @RequestMapping("/movie")
 @AllArgsConstructor
@@ -29,7 +35,15 @@ public class MovieController {
     private final ControllerMapper mapper;
     private final MessageSource messageSource;
 
+    @Operation(summary = "Searches for a movie on an external OMDb service")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "Movie not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @SecurityRequirement(name = "bearer-key")
     @GetMapping("/{input}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<MovieSearchResponseDto> searchMovies(@Valid @PathVariable("input") MovieSearchRequestDto request) {
         List<MovieModel> movieModels = this.omdbService.searchMovies(request.getInput());
         List<MovieSearchDto> movies = movieModels.stream()
@@ -41,7 +55,16 @@ public class MovieController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Saves the video to your favorites list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Movie already liked"),
+            @ApiResponse(responseCode = "404", description = "Movie not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @SecurityRequirement(name = "bearer-key")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<BaseResponse> saveMovie(@Valid @RequestBody MovieSaveRequestDto request, @AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
         this.movieService.saveMovie(request.getImdbId(), username);
@@ -49,7 +72,15 @@ public class MovieController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse(message));
     }
 
+    @Operation(summary = "Gets a list of all your favorite movies")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "404", description = "Movie not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @SecurityRequirement(name = "bearer-key")
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<MovieGetAllResponseDto> getAll(@AuthenticationPrincipal Jwt jwt) {
         String username = jwt.getSubject();
         List<MovieModel> allMovies = movieService.getAllMovies(username);

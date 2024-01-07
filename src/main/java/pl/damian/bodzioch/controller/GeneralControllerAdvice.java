@@ -8,6 +8,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pl.damian.bodzioch.controller.dto.BaseResponse;
 
@@ -21,6 +22,7 @@ public class GeneralControllerAdvice {
 
     private final MessageSource messageSource;
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({Exception.class})
     public ResponseEntity<BaseResponse> handleAppException(Exception ex) {
         log.error("An unexpected Error occurred.", ex);
