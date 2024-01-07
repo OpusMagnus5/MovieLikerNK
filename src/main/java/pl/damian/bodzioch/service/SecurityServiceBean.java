@@ -1,7 +1,6 @@
 package pl.damian.bodzioch.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
@@ -50,7 +49,7 @@ public class SecurityServiceBean implements SecurityService {
             return Base64.getUrlEncoder().encodeToString(outputBytes);
         } catch (GeneralSecurityException e) {
             log.error("Cipher exception during encrypt message: {}", text, e);
-            throw new AppException("general.error", HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw AppException.getGeneralException(e);
         }
     }
 
@@ -67,7 +66,7 @@ public class SecurityServiceBean implements SecurityService {
             return new String(decryptedBytes, StandardCharsets.UTF_8);
         } catch (GeneralSecurityException e) {
             log.error("Cipher exception during decrypt message: {}", encryptedText, e);
-            throw new AppException("general.error", HttpStatus.INTERNAL_SERVER_ERROR, e);
+            throw AppException.getGeneralException(e);
         }
     }
 
