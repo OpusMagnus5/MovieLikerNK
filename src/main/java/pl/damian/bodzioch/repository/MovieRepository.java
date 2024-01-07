@@ -13,5 +13,5 @@ public interface MovieRepository extends Repository<MovieEntity, Long> {
 
     Boolean existsByImdbId(Long imdbId);
 
-    Set<MovieEntity> findAll();
+    Set<MovieEntity> findAllByUserUsername(String username);
 }

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @Builder
@@ -27,4 +29,7 @@ public class UserEntity {
     private String username;
 
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    private Set<MovieEntity> movies;
 }

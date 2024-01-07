@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MovieService {
 
-    void saveMovie(Long imdbId);
+    void saveMovie(Long imdbId, String username);
 
-    List<MovieModel> getAllMovies();
+    List<MovieModel> getAllMovies(String username);
 }

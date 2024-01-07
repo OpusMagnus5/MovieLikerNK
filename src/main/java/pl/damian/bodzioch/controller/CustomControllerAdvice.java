@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +19,7 @@ import pl.damian.bodzioch.exception.AppException;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+@Order(1)
 @RestControllerAdvice
 @AllArgsConstructor
 public class CustomControllerAdvice {

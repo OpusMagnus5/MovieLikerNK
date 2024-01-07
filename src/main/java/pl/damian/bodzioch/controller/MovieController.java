@@ -6,6 +6,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.damian.bodzioch.controller.dto.*;
@@ -40,15 +42,17 @@ public class MovieController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse> saveMovie(@Valid @RequestBody MovieSaveRequestDto request) {
-        this.movieService.saveMovie(request.getImdbId());
+    public ResponseEntity<BaseResponse> saveMovie(@Valid @RequestBody MovieSaveRequestDto request, @AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getSubject();
+        this.movieService.saveMovie(request.getImdbId(), username);
         String message = this.messageSource.getMessage("controller.movieController.successfulSave", new Object[0], LocaleContextHolder.getLocale());
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse(message));
     }
 
     @GetMapping
-    public ResponseEntity<MovieGetAllResponseDto> getAll() {
-        List<MovieModel> allMovies = movieService.getAllMovies();
+    public ResponseEntity<MovieGetAllResponseDto> getAll(@AuthenticationPrincipal Jwt jwt) {
+        String username = jwt.getSubject();
+        List<MovieModel> allMovies = movieService.getAllMovies(username);
         List<MovieGetDto> movies = allMovies.stream()
                 .map(this.mapper::mapToMovieGetDto)
                 .toList();
