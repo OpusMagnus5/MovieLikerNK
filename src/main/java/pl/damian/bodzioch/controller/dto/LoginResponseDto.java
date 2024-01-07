@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MovieGetAllResponseDto extends BaseResponse implements Serializable {
+public class LoginResponseDto implements Serializable {
 
-    private List<MovieGetDto> movies;
+    private String token;
 }
