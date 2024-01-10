@@ -1,5 +1,13 @@
 # README for the Application MovieLikerNK
-Recruitment task for Nowe Kolory
+Recruitment task for Nowe Kolory.
+
+The REST API application for Managing Movies allows users to conveniently browse information 
+about movies and manage their favorite selections. Movie search functionality is facilitated 
+through the integration of an external API, such as the OMDb API, providing detailed information 
+on title, brief description, genre, director, and poster. Additionally, users have the capability 
+to add selected movies to their list of favorites, creating a personalized collection. 
+The functionality also includes displaying a list of favorite movies, enabling users to easily 
+browse their preferred film selections.
 
 ## Required Environment Variables
 Before running this application, make sure the following environment variables are defined:
